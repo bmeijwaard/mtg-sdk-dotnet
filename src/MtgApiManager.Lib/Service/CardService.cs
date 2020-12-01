@@ -106,19 +106,19 @@ namespace MtgApiManager.Lib.Service
         }
 
         /// <inheritdoc />        
-        public ICardService WhereAnd<U>(Expression<Func<CardQueryParameter, U>> property, params string[] values)
+        public ICardService WhereAnd(Expression<Func<CardQueryParameter, string>> property, params string[] values)
             => Where(property, values, Operator.AND);
 
         /// <inheritdoc />        
-        public ICardService WhereOr<U>(Expression<Func<CardQueryParameter, U>> property, params string[] values)
+        public ICardService WhereOr(Expression<Func<CardQueryParameter, string>> property, params string[] values)
             => Where(property, values, Operator.OR);
 
         /// <inheritdoc />        
-        public ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, string value)
+        public ICardService Where(Expression<Func<CardQueryParameter, string>> property, string value)
             => Where(property, new object[] { value }, Operator.AND);
 
         /// <inheritdoc />        
-        public ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, int value)
+        public ICardService Where(Expression<Func<CardQueryParameter, int>> property, int value)
             => Where(property, new object[] { value }, Operator.AND);
 
         private ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, object[] values, Operator logicalOperator)

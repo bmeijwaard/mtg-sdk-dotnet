@@ -518,7 +518,7 @@
             try
             {
                 // Test sending a null parameter.
-                service.Where<int>(null, 1);
+                service.Where(null, 1);
                 Assert.True(false);
             }
             catch (ArgumentNullException ex)

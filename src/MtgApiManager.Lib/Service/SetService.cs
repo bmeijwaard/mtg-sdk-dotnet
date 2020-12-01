@@ -76,19 +76,19 @@ namespace MtgApiManager.Lib.Service
         }
 
         /// <inheritdoc />
-        public ISetService WhereAnd<U>(Expression<Func<SetQueryParameter, U>> property, params string[] values)
+        public ISetService WhereAnd(Expression<Func<SetQueryParameter, string>> property, params string[] values)
             => Where(property, values, Operator.AND);
 
         /// <inheritdoc />
-        public ISetService WhereOr<U>(Expression<Func<SetQueryParameter, U>> property, params string[] values)
+        public ISetService WhereOr(Expression<Func<SetQueryParameter, string>> property, params string[] values)
             => Where(property, values, Operator.OR);
 
         /// <inheritdoc />
-        public ISetService Where<U>(Expression<Func<SetQueryParameter, U>> property, string value)
+        public ISetService Where(Expression<Func<SetQueryParameter, string>> property, string value)
             => Where(property, new object[] { value }, Operator.AND);
 
         /// <inheritdoc />
-        public ISetService Where<U>(Expression<Func<SetQueryParameter, U>> property, int value)
+        public ISetService Where(Expression<Func<SetQueryParameter, int>> property, int value)
             => Where(property, new object[] { value }, Operator.AND);
 
 
