@@ -8,6 +8,7 @@ using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Dto;
 using MtgApiManager.Lib.Dto.Set;
 using MtgApiManager.Lib.Model;
+using MtgApiManager.Lib.Types;
 using MtgApiManager.Lib.Utility;
 
 namespace MtgApiManager.Lib.Service
@@ -75,21 +76,46 @@ namespace MtgApiManager.Lib.Service
         }
 
         /// <inheritdoc />
-        public ISetService Where<U>(Expression<Func<SetQueryParameter, U>> property, U value)
+        public ISetService WhereAnd<U>(Expression<Func<SetQueryParameter, U>> property, params string[] values)
+            => Where(property, values, Operator.AND);
+
+        /// <inheritdoc />
+        public ISetService WhereOr<U>(Expression<Func<SetQueryParameter, U>> property, params string[] values)
+            => Where(property, values, Operator.OR);
+
+        /// <inheritdoc />
+        public ISetService Where<U>(Expression<Func<SetQueryParameter, U>> property, string value)
+            => Where(property, new object[] { value }, Operator.AND);
+
+        /// <inheritdoc />
+        public ISetService Where<U>(Expression<Func<SetQueryParameter, U>> property, int value)
+            => Where(property, new object[] { value }, Operator.AND);
+
+
+        private ISetService Where<U>(Expression<Func<SetQueryParameter, U>> property, object[] values, Operator logicalOperator)
         {
             if (property == null)
             {
                 throw new ArgumentNullException(nameof(property));
             }
 
-            if (EqualityComparer<U>.Default.Equals(value, default))
+            if (values.Any(v => EqualityComparer<object>.Default.Equals(v, default)))
             {
-                throw new ArgumentNullException(nameof(value));
+                throw new ArgumentNullException(nameof(values));
             }
 
             MemberExpression expression = property.Body as MemberExpression;
             var queryName = QueryUtility.GetQueryPropertyName<SetQueryParameter>(expression.Member.Name);
-            WhereQueries[queryName] = Convert.ToString(value);
+
+            if (values.Length > 1)
+            {
+                var queryOperator = logicalOperator.GetOperator();
+                WhereQueries[queryName] = string.Join(queryOperator, values);
+            }
+            else
+            {
+                WhereQueries[queryName] = Uri.UnescapeDataString(Convert.ToString(values[0]));
+            }
 
             return this;
         }

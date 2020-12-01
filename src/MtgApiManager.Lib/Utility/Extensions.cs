@@ -1,5 +1,6 @@
 ﻿namespace MtgApiManager.Lib.Utility
 {
+    using MtgApiManager.Lib.Types;
     using System;
     using System.ComponentModel;
     using System.Linq;
@@ -32,6 +33,26 @@
             }
 
             return (attr.First() as DescriptionAttribute).Description;
+        }
+
+        /// <summary>
+        /// Gets the logical operator required as part of the API query parameter.
+        /// </summary>
+        /// <param name="logicalOperator">The chosen Operator.</param>
+        /// <returns>The logical operator string value.</returns>
+        public static string GetOperator(this Operator logicalOperator)
+        {
+            switch (logicalOperator)
+            {
+                case Operator.AND: 
+                    return ",";
+
+                case Operator.OR: 
+                    return "|";
+
+                default: 
+                    throw new ArgumentOutOfRangeException($"Operator {logicalOperator} does not exist.");
+            }
         }
     }
 }

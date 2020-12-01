@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using MtgApiManager.Lib.Core;
 using MtgApiManager.Lib.Dto;
 using MtgApiManager.Lib.Model;
+using MtgApiManager.Lib.Types;
 using MtgApiManager.Lib.Utility;
 
 namespace MtgApiManager.Lib.Service
@@ -104,30 +105,45 @@ namespace MtgApiManager.Lib.Service
             }
         }
 
-        /// <inheritdoc />
-        public ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, U value)
+        /// <inheritdoc />        
+        public ICardService WhereAnd<U>(Expression<Func<CardQueryParameter, U>> property, params string[] values)
+            => Where(property, values, Operator.AND);
+
+        /// <inheritdoc />        
+        public ICardService WhereOr<U>(Expression<Func<CardQueryParameter, U>> property, params string[] values)
+            => Where(property, values, Operator.OR);
+
+        /// <inheritdoc />        
+        public ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, string value)
+            => Where(property, new object[] { value }, Operator.AND);
+
+        /// <inheritdoc />        
+        public ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, int value)
+            => Where(property, new object[] { value }, Operator.AND);
+
+        private ICardService Where<U>(Expression<Func<CardQueryParameter, U>> property, object[] values, Operator logicalOperator)
         {
             if (property == null)
             {
                 throw new ArgumentNullException(nameof(property));
             }
 
-            if (EqualityComparer<U>.Default.Equals(value, default))
+            if (values.Any(v => EqualityComparer<object>.Default.Equals(v, default)))
             {
-                throw new ArgumentNullException(nameof(value));
+                throw new ArgumentNullException(nameof(values));
             }
 
             MemberExpression expression = property.Body as MemberExpression;
             var queryName = QueryUtility.GetQueryPropertyName<CardQueryParameter>(expression.Member.Name);
-
-            Type valueType = value.GetType();
-            if (valueType.IsArray)
+                        
+            if (values.Length > 1)
             {
-                WhereQueries[queryName] = string.Join("|", (IEnumerable<object>)value);
+                var queryOperator = logicalOperator.GetOperator();
+                WhereQueries[queryName] = string.Join(queryOperator, values);
             }
             else
             {
-                WhereQueries[queryName] = Uri.UnescapeDataString(Convert.ToString(value));
+                WhereQueries[queryName] = Uri.UnescapeDataString(Convert.ToString(values[0]));
             }
 
             return this;

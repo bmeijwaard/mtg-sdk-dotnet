@@ -4,6 +4,7 @@
 // <author>Jason Regnier</author>
 namespace MtgApiManager.Lib.Test.Utility
 {
+    using MtgApiManager.Lib.Types;
     using MtgApiManager.Lib.Utility;
     using System;
     using Xunit;
@@ -48,6 +49,22 @@ namespace MtgApiManager.Lib.Test.Utility
             // Test when description is present.
             testObject = EnumTestObject.HasDescription;
             Assert.Equal("greatDescription", testObject.GetDescription());
+        }
+
+        /// <summary>
+        /// Tests the <see cref="Extensions.GetOperator(Operator)"/> extension method.
+        /// </summary>
+        [Fact]
+        public void GetOperatorTest()
+        {
+            var andOperator = Operator.AND;
+            var orOperator = Operator.OR;
+
+            // Test for the valid AND operator query
+            Assert.Equal(",", andOperator.GetOperator());
+
+            // Test for the valid OR operator query
+            Assert.Equal("|", orOperator.GetOperator());
         }
     }
 }

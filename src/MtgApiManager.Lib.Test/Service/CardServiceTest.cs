@@ -538,7 +538,7 @@
             }
             catch (ArgumentNullException ex)
             {
-                Assert.Equal("value", ex.ParamName);
+                Assert.Equal("values", ex.ParamName);
             }
             catch
             {
